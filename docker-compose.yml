@@ -1,0 +1,28 @@
+services:
+  drupal:
+    image: drupal:10
+    ports:
+      - 8080:80
+    restart: always
+    environment:
+      - PHP_MEMORY_LIMIT=512M
+    depends_on:
+      - db
+    volumes:
+      - drupal_data:/var/www/html
+      - ./themes:/var/www/html/themes/custom
+
+  db:
+    image: mariadb:10.6
+    restart: always
+    environment:
+      MYSQL_DATABASE: drupal
+      MYSQL_USER: drupal
+      MYSQL_PASSWORD: drupal
+      MYSQL_ROOT_PASSWORD: drupal
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  drupal_data:
+  db_data:
