@@ -1,16 +1,20 @@
 {
-  "name": "drupal",
+  "name": "portfolio-drupal-theme",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Portfolio theme for Drupal with Tailwind v4 and DaisyUI",
   "scripts": {
-    "sass": "sass themes/portfolio/scss/style.scss themes/portfolio/css/style.css --watch"
+    "dev": "tailwindcss -i ./themes/portfolio/src/app.css -o ./themes/portfolio/css/style.css --watch",
+    "build": "tailwindcss -i ./themes/portfolio/src/app.css -o ./themes/portfolio/css/style.css --minify",
+    "clean": "rm -f ./themes/portfolio/css/style.css"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "devDependencies": {
-    "sass": "^1.89.2"
+  "dependencies": {
+    "@michaelallenwarner/tailwind-grid-inner": "^1.0.3",
+    "@tailwindcss/cli": "^4.1.10",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.16",
+    "daisyui": "^5.0.43",
+    "tailwindcss": "^4.1.10"
   }
 }

@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+@plugin "@michaelallenwarner/tailwind-grid-inner";
+@plugin "daisyui";
+
+/* CSS Variables from the design system */
+:root {
+	/* Color styles */
+	--text--default: #000000;
+	--text--inverse: #ffffff;
+	--text--muted: #000000;
+	--background--default: #ffffff;
+	--background--primary: #000000;
+	--icon--default: #000000;
+	--icon--inverse: #ffffff;
+	--border--default: #000000;
+	--border--inverse: #ffffff;
+
+	/* Text-size styles */
+	--text--default: 16px;
+	--text--small: 14px;
+	--text--small-600: 14px;
+	--text--xsmall: 12px;
+	--text--medium-500: 20px;
+	--text--default-600: 16px;
+	--text--large-500: 22px;
+	--text--medium: 20px;
+	--heading--h3: 32px;
+	--heading--h6: 16px;
+	--heading--h4: 24px;
+	--heading--h2: 48px;
+	--heading--large: 80px;
+	--heading--large-uppercase: 80px;
+	--heading--h3-uppercase: 32px;
+	--heading--h5: 20px;
+	--heading--small: 72px;
+	--heading--h1: 64px;
+	--heading--medium: 80px;
+}
+
+/* Base styles */
+body {
+	font-family: 'Montserrat', sans-serif;
+	margin: 0;
+	padding: 0;
+	background-color: var(--background--default);
+	color: var(--text--default);
+}
+
+/* Background classes */
+.bg-default {
+	background-color: var(--background--default);
+}
+.bg-primary {
+	background-color: var(--background--primary);
+}
+
+/* Typography classes */
+.text-default {
+	font-size: var(--text--default);
+	color: var(--text--default);
+}
+.text-inverse {
+	color: var(--text--inverse);
+}
+.text-muted {
+	color: var(--text--muted);
+}
+.text-small {
+	font-size: var(--text--small);
+}
+.text-small-600 {
+	font-size: var(--text--small-600);
+	font-weight: 600;
+}
+.text-xsmall {
+	font-size: var(--text--xsmall);
+}
+.text-default-600 {
+	font-size: var(--text--default-600);
+	font-weight: 600;
+}
+.text-medium {
+	font-size: var(--text--medium);
+}
+.text-medium-500 {
+	font-size: var(--text--medium-500);
+	font-weight: 500;
+}
+.text-large-500 {
+	font-size: var(--text--large-500);
+	font-weight: 500;
+}
+
+/* Heading classes */
+.heading-h1 {
+	font-size: var(--heading--h1);
+	font-weight: 600;
+}
+.heading-h2 {
+	font-size: var(--heading--h2);
+	font-weight: 600;
+}
+.heading-h3 {
+	font-size: var(--heading--h3);
+	font-weight: 600;
+}
+.heading-h3-uppercase {
+	font-size: var(--heading--h3-uppercase);
+	font-weight: 600;
+	text-transform: uppercase;
+}
+.heading-h4 {
+	font-size: var(--heading--h4);
+	font-weight: 600;
+}
+.heading-h5 {
+	font-size: var(--heading--h5);
+	font-weight: 600;
+}
+.heading-h6 {
+	font-size: var(--heading--h6);
+	font-weight: 600;
+}
+.heading-large {
+	font-size: var(--heading--large);
+	font-weight: 600;
+	line-height: 110%;
+}
+.heading-large-uppercase {
+	font-size: var(--heading--large-uppercase);
+	font-weight: 600;
+	text-transform: uppercase;
+	line-height: 110%;
+}
+.heading-medium {
+	font-size: var(--heading--medium);
+	font-weight: 600;
+}
+.heading-small {
+	font-size: var(--heading--small);
+	font-weight: 600;
+}
+
+/* Border classes */
+.border-default {
+	border: 1px solid var(--border--default);
+}
+.border-inverse {
+	border: 1px solid var(--border--inverse);
+}
+
+/* Icon classes */
+.icon-default {
+	color: var(--icon--default);
+}
+.icon-inverse {
+	color: var(--icon--inverse);
+}
