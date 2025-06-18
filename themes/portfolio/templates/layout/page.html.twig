@@ -42,46 +42,32 @@
  * @see html.html.twig
  */
 #}
-<div class="layout-container">
+{#
+/**
+ * @file
+ * Theme override for the front page - matches +page.svelte
+ */
+#}
 
-  <header role="banner">
-    {{ page.header }}
-  </header>
+{# Set head metadata #}
+{% set head_title = 'Ilan Kaim - Frontend Developer' %}
+{% set description = 'Frontend developer with 10+ years experience building responsive web applications. Focused on mission-driven teams working towards ethical technology and social good.' %}
 
-  {{ page.primary_menu }}
-  {{ page.secondary_menu }}
+<!-- Page Container with Mobile-First Responsive Design -->
+<div class="flex justify-center min-h-screen">
+  <div class="px-5 sm:px-7 md:px-8 lg:px-15 xl:px-15 pt-10 w-full min-w-[320px] max-w-[1680px]">
+    
+    {# Header Block #}
+    {{ drupal_block('header') }}
 
-  {{ page.breadcrumb }}
+    {# Hero Block #}
+    {{ drupal_block('hero') }}
 
-  {{ page.highlighted }}
+    {# Projects Block - This will come later #}
+    {# {{ drupal_block('projects') }} #}
 
-  {{ page.help }}
+    {# Footer Block #}
+    {{ drupal_block('footer') }}
 
-  <main role="main">
-    <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
-
-    <div class="layout-content">
-      {{ page.content }}
-    </div>{# /.layout-content #}
-
-    {% if page.sidebar_first %}
-      <aside class="layout-sidebar-first" role="complementary">
-        {{ page.sidebar_first }}
-      </aside>
-    {% endif %}
-
-    {% if page.sidebar_second %}
-      <aside class="layout-sidebar-second" role="complementary">
-        {{ page.sidebar_second }}
-      </aside>
-    {% endif %}
-
-  </main>
-
-  {% if page.footer %}
-    <footer role="contentinfo">
-      {{ page.footer }}
-    </footer>
-  {% endif %}
-
-</div>{# /.layout-container #}
+  </div>
+</div>

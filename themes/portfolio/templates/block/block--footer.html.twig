@@ -1,0 +1,98 @@
+{#
+/**
+ * @file
+ * Footer block template - matches Footer.svelte
+ */
+#}
+
+{# Query projects for footer display #}
+{% set featured_projects = drupal_view_result('projects', 'block_1')|slice(0, 5) %}
+{% set experiment_projects = drupal_view_result('projects', 'block_2')|slice(0, 5) %}
+
+<!-- Footer with Mobile-First Responsive Padding -->
+<footer
+  class="bg-black -mx-5 sm:-mx-7 md:-mx-8 lg:-mx-15 xl:-mx-15 px-5 sm:px-7 md:px-8 lg:px-15 xl:px-15 py-12 sm:py-15 lg:py-15 text-inverse"
+>
+  <!-- Main Footer Grid - Mobile First: 1 col, lg: 3 cols -->
+  <div class="gap-6 lg:gap-8 grid grid-cols-1 lg:grid-cols-3">
+    <!-- First section: Name -->
+    <div>
+      <img src="{{ base_path ~ directory }}/images/cod3naut.png" alt="logo" class="invert mb-4 w-48" />
+    </div>
+
+    <!-- Second section: Projects by Category - Mobile First: py-6, md: py-8, lg: py-10 (40px spec) -->
+    <div class="lg:col-span-2 py-6 md:py-8 lg:py-10">
+      <div class="gap-4 grid grid-cols-1 sm:grid-cols-2">
+        <div>
+          <h4 class="mb-2 text-inverse text-small-600">Featured</h4>
+          <ul class="space-y-1 text-inverse text-small">
+            {% for project in featured_projects %}
+              {% set project_node = project._entity %}
+              <li>
+                {% if project_node.field_project_link.uri %}
+                  <a
+                    href="{{ project_node.field_project_link.uri }}"
+                    {% if project_node.field_project_link.uri starts with 'http' %}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    {% endif %}
+                    class="hover:text-gray-300 transition-colors"
+                  >
+                    {{ project_node.title.value }}
+                  </a>
+                {% elseif project_node.field_project_github.uri %}
+                  <a
+                    href="{{ project_node.field_project_github.uri }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="hover:text-gray-300 transition-colors"
+                  >
+                    {{ project_node.title.value }}
+                  </a>
+                {% else %}
+                  {{ project_node.title.value }}
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div>
+          <h4 class="mb-2 text-inverse text-small-600">Experiments</h4>
+          <ul class="space-y-1 text-inverse text-small">
+            {% for project in experiment_projects %}
+              {% set project_node = project._entity %}
+              <li>
+                {% if project_node.field_project_link.uri %}
+                  <a
+                    href="{{ project_node.field_project_link.uri }}"
+                    {% if project_node.field_project_link.uri starts with 'http' %}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    {% endif %}
+                    class="hover:text-gray-300 transition-colors"
+                  >
+                    {{ project_node.title.value }}
+                  </a>
+                {% elseif project_node.field_project_github.uri %}
+                  <a
+                    href="{{ project_node.field_project_github.uri }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="hover:text-gray-300 transition-colors"
+                  >
+                    {{ project_node.title.value }}
+                  </a>
+                {% else %}
+                  {{ project_node.title.value }}
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# Include Footer Social block #}
+  {{ drupal_block('footer_social') }}
+</footer>
