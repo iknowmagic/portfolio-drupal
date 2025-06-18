@@ -1,30 +1,24 @@
-<!-- Header - Mobile First: py-6, Desktop: py-6 (25px spec) -->
-<header class="flex lg:flex-row flex-col lg:justify-between lg:items-center gap-4 py-6">
+<!-- Header Section -->
+<header
+	class="flex lg:flex-row flex-col lg:justify-between lg:items-center gap-4 py-6">
 	<!-- Left: Name -->
 	<a href="/" class="flex items-center space-x-2">
-		<img src="{{ base_path ~ directory }}/images/cod3naut.png" alt="logo" class="w-auto h-10" />
+		<img src="{{ base_path ~ directory }}/images/cod3naut.png" alt="logo" class="w-auto h-10"/>
 	</a>
 
 	<!-- Right: Navigation and Social -->
-	<div class="flex lg:flex-row flex-col lg:items-center gap-4 lg:gap-8">
+	<div
+		class="flex lg:flex-row flex-col lg:items-center gap-4 lg:gap-8">
 		<!-- Navigation Links -->
 		<nav class="flex gap-4 lg:gap-6"></nav>
 
 		<!-- Social Icons -->
 		<div class="flex gap-4">
-			<a
-				href="https://github.com/iknowmagic"
-				target="_blank"
-				class="hover:opacity-60 transition-opacity icon-default"
-			>
+			<a href="https://github.com/iknowmagic" target="_blank" class="hover:opacity-60 transition-opacity icon-default">
 				<i data-lucide="github"></i>
 			</a>
-			<a
-				href="https://linkedin.com/in/cod3naut"
-				target="_blank"
-				class="hover:opacity-60 transition-opacity icon-default"
-			>
-				 <i data-lucide="linkedin"></i>
+			<a href="https://linkedin.com/in/cod3naut" target="_blank" class="hover:opacity-60 transition-opacity icon-default">
+				<i data-lucide="linkedin"></i>
 			</a>
 		</div>
 	</div>
@@ -32,19 +26,35 @@
 
 <div class="divider divider-neutral"></div>
 
-<section class="py-8 md:py-10 lg:py-10">
+<!-- Hero Section -->
+<section class="py-4">
 	<h1 class="heading-large">ILAN KAIM</h1>
 </section>
 
+<!-- Projects Grid Container -->
+<section
+	class="mb-32 lg:mb-50">
+	<!-- Clean Grid using grid-inner plugin -->
+	<div class="grid-inner-1 md:grid-inner-2 lg:grid-inner-3 border-2 border-black">
+		{% if all_projects %}
+			{% for project in all_projects %}
+				<div>
+					{{ project.title.value }}
+				</div>
+			{% endfor %}
+		{% endif %}
+	</div>
+</section>
 
+<!-- Footer Section -->
 <footer
-	class="bg-black -mx-5 sm:-mx-7 md:-mx-8 lg:-mx-15 xl:-mx-15 px-5 sm:px-7 md:px-8 lg:px-15 xl:px-15 py-12 sm:py-15 lg:py-15 text-inverse"
->
+	class="bg-black -mx-5 sm:-mx-7 md:-mx-8 lg:-mx-15 xl:-mx-15 px-5 sm:px-7 md:px-8 lg:px-15 xl:px-15 py-12 sm:py-15 lg:py-15 text-inverse">
 	<!-- Main Footer Grid - Mobile First: 1 col, lg: 3 cols -->
-	<div class="gap-6 lg:gap-8 grid grid-cols-1 lg:grid-cols-3">
+	<div
+		class="gap-6 lg:gap-8 grid grid-cols-1 lg:grid-cols-3">
 		<!-- First section: Name -->
 		<div>
-			<img src="/cod3naut.png" alt="logo" class="invert mb-4 w-48" />
+			<img src="{{ base_path ~ directory }}/images/cod3naut.png" alt="logo" class="invert mb-4 w-48"/>
 		</div>
 
 		<!-- Second section: Projects by Category - Mobile First: py-6, md: py-8, lg: py-10 (40px spec) -->
@@ -53,43 +63,55 @@
 				<div>
 					<h4 class="mb-2 text-inverse text-small-600">Featured</h4>
 					<ul class="space-y-1 text-inverse text-small">
-						{# {#each featuredProjects as project}
-							<li>
-								{#if project.link}
-									<a
-										href={project.link}
-										target={project.link.startsWith('http') ? '_blank' : undefined}
-										rel={project.link.startsWith('http') ? 'noopener noreferrer' : undefined}
-										class="hover:text-gray-300 transition-colors"
-									>
-										{project.title}
-									</a>
-								{:else}
-									{project.title}
-								{/if}
-							</li>
-						{/each} #}
+						{% if featured_projects %}
+							{% for project in featured_projects %}
+								{% set project_link = project.field_project_link.uri %}
+								{% set project_github = project.field_project_github.uri %}
+
+								{% if project_link %}
+									<p>
+										<a href="{{ project_link }}" {% if project_link starts with 'http' %} target="_blank" rel="noopener noreferrer" {% endif %} class="hover:text-gray-300 transition-colors">
+											{{ project.title.value }}
+										</a>
+									</p>
+								{% elseif project_github %}
+									<p>
+										<a href="{{ project_github }}" target="_blank" rel="noopener noreferrer" class="hover:text-gray-300 transition-colors">
+											{{ project.title.value }}
+										</a>
+									</p>
+								{% else %}
+									<p>{{ project.title.value }}</p>
+								{% endif %}
+							{% endfor %}
+						{% endif %}
 					</ul>
 				</div>
 				<div>
 					<h4 class="mb-2 text-inverse text-small-600">Experiments</h4>
 					<ul class="space-y-1 text-inverse text-small">
-						{# {#each experimentProjects as project}
-							<li>
-								{#if project.link}
-									<a
-										href={project.link}
-										target={project.link.startsWith('http') ? '_blank' : undefined}
-										rel={project.link.startsWith('http') ? 'noopener noreferrer' : undefined}
-										class="hover:text-gray-300 transition-colors"
-									>
-										{project.title}
-									</a>
-								{:else}
-									{project.title}
-								{/if}
-							</li>
-						{/each} #}
+						{% if experiment_projects %}
+							{% for project in experiment_projects %}
+								{% set project_link = project.field_project_link.uri %}
+								{% set project_github = project.field_project_github.uri %}
+
+								{% if project_link %}
+									<p>
+										<a href="{{ project_link }}" {% if project_link starts with 'http' %} target="_blank" rel="noopener noreferrer" {% endif %} class="hover:text-gray-300 transition-colors">
+											{{ project.title.value }}
+										</a>
+									</p>
+								{% elseif project_github %}
+									<p>
+										<a href="{{ project_github }}" target="_blank" rel="noopener noreferrer" class="hover:text-gray-300 transition-colors">
+											{{ project.title.value }}
+										</a>
+									</p>
+								{% else %}
+									<p>{{ project.title.value }}</p>
+								{% endif %}
+							{% endfor %}
+						{% endif %}
 					</ul>
 				</div>
 			</div>

@@ -8,6 +8,7 @@
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
+    --color-yellow-100: oklch(97.3% 0.071 103.193);
     --color-gray-50: oklch(98.5% 0.002 247.839);
     --color-gray-100: oklch(96.7% 0.003 264.542);
     --color-gray-300: oklch(87.2% 0.01 258.338);
@@ -171,6 +172,56 @@
   }
 }
 @layer utilities {
+  .diff {
+    position: relative;
+    display: grid;
+    width: 100%;
+    overflow: hidden;
+    webkit-user-select: none;
+    user-select: none;
+    direction: ltr;
+    container-type: inline-size;
+    grid-template-columns: auto 1fr;
+    &:focus-visible, &:has(.diff-item-1:focus-visible) {
+      outline-style: var(--tw-outline-style);
+      outline-width: 2px;
+      outline-offset: 1px;
+      outline-color: var(--color-base-content);
+    }
+    &:focus-visible {
+      outline-style: var(--tw-outline-style);
+      outline-width: 2px;
+      outline-offset: 1px;
+      outline-color: var(--color-base-content);
+      .diff-resizer {
+        min-width: 90cqi;
+        max-width: 90cqi;
+      }
+    }
+    &:has(.diff-item-2:focus-visible) {
+      outline-style: var(--tw-outline-style);
+      outline-width: 2px;
+      outline-offset: 1px;
+      .diff-resizer {
+        min-width: 10cqi;
+        max-width: 10cqi;
+      }
+    }
+    @supports (-webkit-overflow-scrolling: touch) and (overflow: -webkit-paged-x) {
+      &:focus {
+        .diff-resizer {
+          min-width: 10cqi;
+          max-width: 10cqi;
+        }
+      }
+      &:has(.diff-item-1:focus) {
+        .diff-resizer {
+          min-width: 90cqi;
+          max-width: 90cqi;
+        }
+      }
+    }
+  }
   .tooltip {
     position: relative;
     display: inline-block;
@@ -622,6 +673,75 @@
       border-bottom: var(--border) solid var(--color-base-content);
       @supports (color: color-mix(in lab, red, red)) {
         border-bottom: var(--border) solid color-mix(in oklch, var(--color-base-content) 5%, #0000);
+      }
+    }
+  }
+  .grid-inner-1 {
+    --tw-grid-inner-border: var(--tw-grid-inner-border-custom, 2px);
+    display: grid;
+    gap: 0px;
+    grid-template-columns: repeat(1,minmax(0,1fr));
+    margin-left: calc(var(--tw-grid-inner-border)/-2);
+    margin-right: calc(var(--tw-grid-inner-border)/-2);
+    & > :where(:nth-child(n)) {
+      margin: 0px;
+      border-width: calc(var(--tw-grid-inner-border) / 2);
+      border-color: inherit;
+      border-style: inherit;
+      grid-column: span 1 / span 1;
+      position: static;
+      &::after {
+        display: none;
+      }
+    }
+    & > :where(:nth-child(-n + 1)) {
+      border-top-width: 0px;
+    }
+    & > :where(:nth-child(1n + 1):nth-last-child(-n + 1)) {
+      border-bottom-width: 0px;
+    }
+    & > :where(:nth-child(1n + 1):nth-last-child(-n + 1) ~ *) {
+      border-bottom-width: 0px;
+    }
+    & > :where(:nth-child(1n + 1)) {
+      border-left-width: 0px;
+      margin-left: calc(var(--tw-grid-inner-border)/2);
+    }
+    & > :where(:nth-child(1n+1)) {
+      border-right-width: 0px;
+      margin-right: calc(var(--tw-grid-inner-border)/2);
+    }
+    & > :where(:last-child:not(:nth-child(1n+1))) {
+      position: relative;
+      &::after {
+        content: '';
+        border-left-width: calc(var(--tw-grid-inner-border) / 2);
+        border-left-style: inherit;
+        border-left-color: inherit;
+        display: block;
+        position: absolute;
+        left: calc(100% + var(--tw-grid-inner-border) / 2);
+        top: calc(var(--tw-grid-inner-border) / -2);
+        bottom: 0;
+      }
+    }
+    & > :where(:nth-last-child(-n + 1):not(:nth-child(1n + 1):nth-last-child(-n + 1)):not(:nth-child(1n + 1):nth-last-child(-n + 1) ~ *)) {
+      position: relative;
+      &::after {
+        content: '';
+        border-top-width: calc(var(--tw-grid-inner-border) / 2);
+        border-top-style: inherit;
+        border-top-color: inherit;
+        display: block;
+        position: absolute;
+        left: calc(var(--tw-grid-inner-border) / -2);
+        right: calc(var(--tw-grid-inner-border) / -2);
+        top: calc(100% + var(--tw-grid-inner-border) / 2);
+      }
+    }
+    & > :where(:nth-last-child(-n + 1):not(:nth-child(1n + 1):nth-last-child(-n + 1)):not(:nth-child(1n + 1):nth-last-child(-n + 1) ~ *):nth-child(1n+1)) {
+      &::after {
+        right: 0;
       }
     }
   }
@@ -1203,6 +1323,9 @@
   .mb-6 {
     margin-bottom: calc(var(--spacing) * 6);
   }
+  .mb-32 {
+    margin-bottom: calc(var(--spacing) * 32);
+  }
   .status {
     display: inline-block;
     aspect-ratio: 1 / 1;
@@ -1476,6 +1599,13 @@
     border-style: var(--tw-border-style);
     border-width: 1px;
   }
+  .border-2 {
+    border-style: var(--tw-border-style);
+    border-width: 2px;
+  }
+  .border-black {
+    border-color: var(--color-black);
+  }
   .border-primary {
     border-color: var(--color-primary);
   }
@@ -1488,10 +1618,16 @@
   .bg-primary {
     background-color: var(--color-primary);
   }
+  .bg-yellow-100 {
+    background-color: var(--color-yellow-100);
+  }
   .divider-neutral {
     &:before, &:after {
       background-color: var(--color-neutral);
     }
+  }
+  .p-4 {
+    padding: calc(var(--spacing) * 4);
   }
   .p-6 {
     padding: calc(var(--spacing) * 6);
@@ -1511,6 +1647,9 @@
   .py-2 {
     padding-block: calc(var(--spacing) * 2);
   }
+  .py-4 {
+    padding-block: calc(var(--spacing) * 4);
+  }
   .py-6 {
     padding-block: calc(var(--spacing) * 6);
   }
@@ -1528,6 +1667,9 @@
   }
   .text-center {
     text-align: center;
+  }
+  .text-gray-500 {
+    color: var(--color-gray-500);
   }
   .text-gray-700 {
     color: var(--color-gray-700);
@@ -1614,6 +1756,77 @@
       padding-block: calc(var(--spacing) * 15);
     }
   }
+  .md\:grid-inner-2 {
+    @media (width >= 48rem) {
+      --tw-grid-inner-border: var(--tw-grid-inner-border-custom, 2px);
+      display: grid;
+      gap: 0px;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      margin-left: calc(var(--tw-grid-inner-border)/-2);
+      margin-right: calc(var(--tw-grid-inner-border)/-2);
+      & > :where(:nth-child(n)) {
+        margin: 0px;
+        border-width: calc(var(--tw-grid-inner-border) / 2);
+        border-color: inherit;
+        border-style: inherit;
+        grid-column: span 1 / span 1;
+        position: static;
+        &::after {
+          display: none;
+        }
+      }
+      & > :where(:nth-child(-n + 2)) {
+        border-top-width: 0px;
+      }
+      & > :where(:nth-child(2n + 1):nth-last-child(-n + 2)) {
+        border-bottom-width: 0px;
+      }
+      & > :where(:nth-child(2n + 1):nth-last-child(-n + 2) ~ *) {
+        border-bottom-width: 0px;
+      }
+      & > :where(:nth-child(2n + 1)) {
+        border-left-width: 0px;
+        margin-left: calc(var(--tw-grid-inner-border)/2);
+      }
+      & > :where(:nth-child(2n+2)) {
+        border-right-width: 0px;
+        margin-right: calc(var(--tw-grid-inner-border)/2);
+      }
+      & > :where(:last-child:not(:nth-child(2n+2))) {
+        position: relative;
+        &::after {
+          content: '';
+          border-left-width: calc(var(--tw-grid-inner-border) / 2);
+          border-left-style: inherit;
+          border-left-color: inherit;
+          display: block;
+          position: absolute;
+          left: calc(100% + var(--tw-grid-inner-border) / 2);
+          top: calc(var(--tw-grid-inner-border) / -2);
+          bottom: 0;
+        }
+      }
+      & > :where(:nth-last-child(-n + 2):not(:nth-child(2n + 1):nth-last-child(-n + 2)):not(:nth-child(2n + 1):nth-last-child(-n + 2) ~ *)) {
+        position: relative;
+        &::after {
+          content: '';
+          border-top-width: calc(var(--tw-grid-inner-border) / 2);
+          border-top-style: inherit;
+          border-top-color: inherit;
+          display: block;
+          position: absolute;
+          left: calc(var(--tw-grid-inner-border) / -2);
+          right: calc(var(--tw-grid-inner-border) / -2);
+          top: calc(100% + var(--tw-grid-inner-border) / 2);
+        }
+      }
+      & > :where(:nth-last-child(-n + 2):not(:nth-child(2n + 1):nth-last-child(-n + 2)):not(:nth-child(2n + 1):nth-last-child(-n + 2) ~ *):nth-child(2n+2)) {
+        &::after {
+          right: 0;
+        }
+      }
+    }
+  }
   .md\:-mx-8 {
     @media (width >= 48rem) {
       margin-inline: calc(var(--spacing) * -8);
@@ -1649,6 +1862,77 @@
       padding-block: calc(var(--spacing) * 10);
     }
   }
+  .lg\:grid-inner-3 {
+    @media (width >= 64rem) {
+      --tw-grid-inner-border: var(--tw-grid-inner-border-custom, 2px);
+      display: grid;
+      gap: 0px;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      margin-left: calc(var(--tw-grid-inner-border)/-2);
+      margin-right: calc(var(--tw-grid-inner-border)/-2);
+      & > :where(:nth-child(n)) {
+        margin: 0px;
+        border-width: calc(var(--tw-grid-inner-border) / 2);
+        border-color: inherit;
+        border-style: inherit;
+        grid-column: span 1 / span 1;
+        position: static;
+        &::after {
+          display: none;
+        }
+      }
+      & > :where(:nth-child(-n + 3)) {
+        border-top-width: 0px;
+      }
+      & > :where(:nth-child(3n + 1):nth-last-child(-n + 3)) {
+        border-bottom-width: 0px;
+      }
+      & > :where(:nth-child(3n + 1):nth-last-child(-n + 3) ~ *) {
+        border-bottom-width: 0px;
+      }
+      & > :where(:nth-child(3n + 1)) {
+        border-left-width: 0px;
+        margin-left: calc(var(--tw-grid-inner-border)/2);
+      }
+      & > :where(:nth-child(3n+3)) {
+        border-right-width: 0px;
+        margin-right: calc(var(--tw-grid-inner-border)/2);
+      }
+      & > :where(:last-child:not(:nth-child(3n+3))) {
+        position: relative;
+        &::after {
+          content: '';
+          border-left-width: calc(var(--tw-grid-inner-border) / 2);
+          border-left-style: inherit;
+          border-left-color: inherit;
+          display: block;
+          position: absolute;
+          left: calc(100% + var(--tw-grid-inner-border) / 2);
+          top: calc(var(--tw-grid-inner-border) / -2);
+          bottom: 0;
+        }
+      }
+      & > :where(:nth-last-child(-n + 3):not(:nth-child(3n + 1):nth-last-child(-n + 3)):not(:nth-child(3n + 1):nth-last-child(-n + 3) ~ *)) {
+        position: relative;
+        &::after {
+          content: '';
+          border-top-width: calc(var(--tw-grid-inner-border) / 2);
+          border-top-style: inherit;
+          border-top-color: inherit;
+          display: block;
+          position: absolute;
+          left: calc(var(--tw-grid-inner-border) / -2);
+          right: calc(var(--tw-grid-inner-border) / -2);
+          top: calc(100% + var(--tw-grid-inner-border) / 2);
+        }
+      }
+      & > :where(:nth-last-child(-n + 3):not(:nth-child(3n + 1):nth-last-child(-n + 3)):not(:nth-child(3n + 1):nth-last-child(-n + 3) ~ *):nth-child(3n+3)) {
+        &::after {
+          right: 0;
+        }
+      }
+    }
+  }
   .lg\:col-span-2 {
     @media (width >= 64rem) {
       grid-column: span 2 / span 2;
@@ -1657,6 +1941,11 @@
   .lg\:-mx-15 {
     @media (width >= 64rem) {
       margin-inline: calc(var(--spacing) * -15);
+    }
+  }
+  .lg\:mb-50 {
+    @media (width >= 64rem) {
+      margin-bottom: calc(var(--spacing) * 50);
     }
   }
   .lg\:grid-cols-3 {

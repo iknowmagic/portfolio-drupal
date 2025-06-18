@@ -19,3 +19,55 @@ function portfolio_preprocess_image_widget(array &$variables) {
     unset($data['preview']);
   }
 }
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function portfolio_preprocess_page(&$variables) {
+  if ($variables['is_front'] && !isset($variables['projects'])) {
+    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+    $query = $node_storage->getQuery()
+      ->condition('type', 'project')
+      ->condition('status', 1)
+      ->accessCheck(TRUE)
+      ->sort('field_project_order', 'ASC');
+    
+    $project_ids = $query->execute();
+    $projects = $node_storage->loadMultiple($project_ids);
+    
+    // Separate into categories
+    $featured_projects = [];
+    $experiment_projects = [];
+    $debug_info = [];
+    
+    foreach ($projects as $project) {
+      $tags = [];
+      
+      // For List (text) field - get raw values
+      if ($project->hasField('field_project_tags') && !$project->get('field_project_tags')->isEmpty()) {
+        $field_values = $project->get('field_project_tags')->getValue();
+        foreach ($field_values as $value) {
+          $tags[] = strtolower($value['value']);
+        }
+      }
+      
+      // Debug info
+      $debug_info[] = [
+        'title' => $project->getTitle(),
+        'tags' => $tags
+      ];
+      
+      // Sort into categories
+      if (in_array('featured', $tags)) {
+        $featured_projects[] = $project;
+      } elseif (in_array('experiments', $tags)) {
+        $experiment_projects[] = $project;
+      }
+    }
+    
+    $variables['featured_projects'] = $featured_projects;
+    $variables['experiment_projects'] = $experiment_projects;
+    $variables['all_projects'] = $projects;
+    $variables['debug_projects'] = $debug_info;
+  }
+}
