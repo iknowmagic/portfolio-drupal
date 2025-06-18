@@ -22,7 +22,4 @@ libraries-extend:
     - portfolio/progress
 
 regions:
-  header: Header
-  hero: Hero
   content: Content
-  footer: Footer

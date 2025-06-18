@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "Portfolio theme for Drupal with Tailwind v4 and DaisyUI",
   "scripts": {
-    "dev": "tailwindcss -i ./src/app.css -o ./css/style.css --watch --content './templates/**/*.twig'",
-    "build": "tailwindcss -i ./src/app.css -o ./css/style.css --minify --content './templates/**/*.twig'"
+    "dev": "tailwindcss -i ./themes/portfolio/src/app.css -o ./css/style.css --watch --content './themes/portfolio/templates/**/*.twig'",
+    "build": "tailwindcss -i ./themes/portfolio/src/app.css -o ./css/style.css --minify --content './themes/portfolio/templates/**/*.twig'",
+    "watch:twig": "chokidar './themes/portfolio/templates/**/*.twig' -c 'docker-compose exec drupal drush cr'",
+    "watch:all": "concurrently \"npm run dev\" \"npm run watch:twig\"",
+    "clear-cache": "docker-compose exec drupal drush cr"
   },
   "keywords": [],
   "author": "",
@@ -15,5 +18,9 @@
     "@tailwindcss/typography": "^0.5.16",
     "daisyui": "^5.0.43",
     "tailwindcss": "^4.1.10"
+  },
+  "devDependencies": {
+    "chokidar-cli": "^3.0.0",
+    "concurrently": "^9.1.2"
   }
 }
