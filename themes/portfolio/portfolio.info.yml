@@ -1,8 +1,8 @@
 name: portfolio
 type: theme
-"base theme": stable9
+base theme: stable9
 version: 1.0.0
-description: "Portfolio theme using Tailwind v4 and DaisyUI - ported from SvelteKit"
+description: "Portfolio theme"
 core_version_requirement: ^10
 generator: "starterkit_theme:10.4.8"
 
@@ -16,5 +16,13 @@ libraries-extend:
     - portfolio/dropbutton
   core/drupal.dialog:
     - portfolio/dialog
+  file/drupal.file:
+    - portfolio/file
   core/drupal.progress:
     - portfolio/progress
+
+regions:
+  header: Header
+  hero: Hero
+  content: Content
+  footer: Footer

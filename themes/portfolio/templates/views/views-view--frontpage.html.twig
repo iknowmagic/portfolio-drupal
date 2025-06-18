@@ -1,0 +1,61 @@
+{#
+/**
+ * @file
+ * Frontpage view template to match SvelteKit design
+ * Save as: themes/portfolio/templates/views/views-view--frontpage.html.twig
+ */
+#}
+
+<!-- Projects Section - Mobile First: py-8, md: py-10, lg: py-10 (40px spec) -->
+<section class="py-8 md:py-10 lg:py-10">
+  <!-- Filter Buttons - matches SvelteKit component exactly -->
+  <div class="mb-6 md:mb-8">
+    <div class="flex flex-wrap gap-2 md:gap-3">
+      <button class="filter-btn active" data-filter="all">
+        <span class="text-small-600">All</span>
+      </button>
+      <button class="filter-btn" data-filter="featured">
+        <span class="text-small-600">Featured</span>
+      </button>
+      <button class="filter-btn" data-filter="experiments">
+        <span class="text-small-600">Experiments</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Projects Grid - Mobile First: 1 col, md: 2 cols, lg: 3 cols -->
+  {% if rows %}
+    <div class="gap-6 grid projects-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      {{ rows }}
+    </div>
+  {% else %}
+    <div class="py-8 text-center">
+      <p class="text-muted">No projects found.</p>
+    </div>
+  {% endif %}
+</section>
+
+<script>
+// Simple filter functionality to match SvelteKit behavior
+document.addEventListener('DOMContentLoaded', function() {
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const projectCards = document.querySelectorAll('.project-card');
+  
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const filter = this.dataset.filter;
+      
+      // Update active button
+      filterBtns.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      
+      // Filter projects
+      projectCards.forEach(card => {
+        const tags = card.dataset.tags ? card.dataset.tags.split(',') : [];
+        const shouldShow = filter === 'all' || tags.includes(filter);
+        card.style.display = shouldShow ? 'block' : 'none';
+      });
+    });
+  });
+});
+</script>

@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "description": "Portfolio theme for Drupal with Tailwind v4 and DaisyUI",
   "scripts": {
-    "dev": "tailwindcss -i ./themes/portfolio/src/app.css -o ./themes/portfolio/css/style.css --watch",
-    "build": "tailwindcss -i ./themes/portfolio/src/app.css -o ./themes/portfolio/css/style.css --minify",
-    "clean": "rm -f ./themes/portfolio/css/style.css"
+    "dev": "tailwindcss -i ./src/app.css -o ./css/style.css --watch --content './templates/**/*.twig'",
+    "build": "tailwindcss -i ./src/app.css -o ./css/style.css --minify --content './templates/**/*.twig'"
   },
   "keywords": [],
   "author": "",
