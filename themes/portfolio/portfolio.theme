@@ -30,44 +30,193 @@ function portfolio_preprocess_page(&$variables) {
       ->condition('type', 'project')
       ->condition('status', 1)
       ->accessCheck(TRUE)
-      ->sort('field_project_order', 'ASC');
+      ->sort('field_project_order', 'DESC'); // Match SvelteKit order: highest first
     
     $project_ids = $query->execute();
     $projects = $node_storage->loadMultiple($project_ids);
     
-    // Separate into categories
+    // Enhanced project processing with SvelteKit-style data structure
+    $all_projects = [];
     $featured_projects = [];
     $experiment_projects = [];
-    $debug_info = [];
     
     foreach ($projects as $project) {
-      $tags = [];
+      $processed_project = _portfolio_process_project($project);
+      $all_projects[] = $processed_project;
       
-      // For List (text) field - get raw values
-      if ($project->hasField('field_project_tags') && !$project->get('field_project_tags')->isEmpty()) {
-        $field_values = $project->get('field_project_tags')->getValue();
-        foreach ($field_values as $value) {
-          $tags[] = strtolower($value['value']);
-        }
-      }
-      
-      // Debug info
-      $debug_info[] = [
-        'title' => $project->getTitle(),
-        'tags' => $tags
-      ];
-      
-      // Sort into categories
-      if (in_array('featured', $tags)) {
-        $featured_projects[] = $project;
-      } elseif (in_array('experiments', $tags)) {
-        $experiment_projects[] = $project;
+      // Sort into categories based on tags
+      if (in_array('featured', $processed_project['tags'])) {
+        $featured_projects[] = $processed_project;
+      } elseif (in_array('experiments', $processed_project['tags'])) {
+        $experiment_projects[] = $processed_project;
       }
     }
     
+    // Pass processed data to templates
+    $variables['all_projects'] = $all_projects;
     $variables['featured_projects'] = $featured_projects;
     $variables['experiment_projects'] = $experiment_projects;
-    $variables['all_projects'] = $projects;
-    $variables['debug_projects'] = $debug_info;
+  }
+}
+
+/**
+ * Process individual project node into SvelteKit-compatible structure.
+ * 
+ * @param \Drupal\node\Entity\Node $project
+ *   The project node to process.
+ * 
+ * @return array
+ *   Processed project data matching SvelteKit structure.
+ */
+function _portfolio_process_project($project) {
+  // Extract basic project data
+  $processed = [
+    'id' => $project->id(),
+    'title' => $project->getTitle(),
+    'description' => '',
+    'features' => [],
+    'tags' => [],
+    'order' => 0,
+    'image' => '',
+    'links' => [
+      'live' => null,
+      'github' => null,
+      'video' => null,
+      'article' => null,
+    ],
+  ];
+  
+  // Description
+  if ($project->hasField('field_project_description') && !$project->get('field_project_description')->isEmpty()) {
+    $processed['description'] = strip_tags($project->get('field_project_description')->value);
+  }
+  
+  // Features - convert text field to array (split by newlines or commas)
+  if ($project->hasField('field_project_features') && !$project->get('field_project_features')->isEmpty()) {
+    $features_text = $project->get('field_project_features')->value;
+    // Split by newlines, then commas, and clean up
+    $features_raw = preg_split('/[\r\n,]+/', $features_text);
+    $processed['features'] = array_filter(array_map('trim', $features_raw));
+  }
+  
+  // Tags
+  if ($project->hasField('field_project_tags') && !$project->get('field_project_tags')->isEmpty()) {
+    foreach ($project->get('field_project_tags')->getValue() as $tag_item) {
+      $processed['tags'][] = strtolower(trim($tag_item['value']));
+    }
+  }
+  
+  // Order
+  if ($project->hasField('field_project_order') && !$project->get('field_project_order')->isEmpty()) {
+    $processed['order'] = (int) $project->get('field_project_order')->value;
+  }
+  
+  // Image
+  if ($project->hasField('field_project_image') && !$project->get('field_project_image')->isEmpty()) {
+    $image_entity = $project->get('field_project_image')->entity;
+    if ($image_entity) {
+      $processed['image'] = \Drupal::service('file_url_generator')->generateAbsoluteString($image_entity->getFileUri());
+    }
+  }
+  
+  // Links - Map Drupal fields to SvelteKit structure
+  $link_fields = [
+    'live' => 'field_project_link',
+    'github' => 'field_project_github', 
+    'video' => 'field_project_video',
+    'article' => 'field_project_article',
+  ];
+  
+  foreach ($link_fields as $link_type => $field_name) {
+    if ($project->hasField($field_name) && !$project->get($field_name)->isEmpty()) {
+      $processed['links'][$link_type] = $project->get($field_name)->uri;
+    }
+  }
+  
+  // Add computed properties for templates
+  $processed['primary_link'] = _portfolio_get_primary_link($processed['links']);
+  $processed['media_display'] = _portfolio_get_media_display($processed['primary_link']);
+  $processed['primary_tag'] = !empty($processed['tags']) ? $processed['tags'][0] : 'featured';
+  
+  return $processed;
+}
+
+/**
+ * Get primary link using SvelteKit priority logic.
+ * Priority: live > github > video > article
+ * 
+ * @param array $links
+ *   Array of project links.
+ * 
+ * @return array|null
+ *   Primary link with 'url' and 'type' keys, or null if no links.
+ */
+function _portfolio_get_primary_link($links) {
+  // Priority order matches SvelteKit exactly
+  $priority_order = ['live', 'github', 'video', 'article'];
+  
+  foreach ($priority_order as $type) {
+    if (!empty($links[$type])) {
+      return [
+        'url' => $links[$type],
+        'type' => $type,
+      ];
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * Get media display info for hover overlays.
+ * Matches SvelteKit getMediaDisplay function.
+ * 
+ * @param array|null $primary_link
+ *   Primary link array with 'type' key.
+ * 
+ * @return array|null
+ *   Media display info with 'icon' and 'label' keys.
+ */
+function _portfolio_get_media_display($primary_link) {
+  if (!$primary_link) {
+    return null;
+  }
+  
+  $media_types = [
+    'video' => [
+      'icon' => 'play',
+      'label' => 'Video',
+    ],
+    'live' => [
+      'icon' => 'external-link',
+      'label' => 'Live Site',
+    ],
+    'github' => [
+      'icon' => 'github',
+      'label' => 'Source Code',
+    ],
+    'article' => [
+      'icon' => 'file-text',
+      'label' => 'Article',
+    ],
+  ];
+  
+  return $media_types[$primary_link['type']] ?? [
+    'icon' => 'external-link',
+    'label' => 'View',
+  ];
+}
+
+/**
+ * Implements hook_preprocess_node().
+ * 
+ * Enhanced preprocessing for project nodes.
+ */
+function portfolio_preprocess_node(&$variables) {
+  $node = $variables['node'];
+  
+  if ($node->getType() === 'project') {
+    // Process project data for individual node pages and teasers
+    $variables['processed_project'] = _portfolio_process_project($node);
   }
 }
