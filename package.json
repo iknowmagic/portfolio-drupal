@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "Portfolio theme for Drupal with Tailwind v4 and DaisyUI",
   "scripts": {
-    "dev": "tailwindcss -i ./themes/portfolio/src/app.css -o ./css/style.css --watch --content './themes/portfolio/templates/**/*.twig'",
-    "build": "tailwindcss -i ./themes/portfolio/src/app.css -o ./css/style.css --minify --content './themes/portfolio/templates/**/*.twig'",
-    "watch:twig": "chokidar './themes/portfolio/templates/**/*.twig' -c 'docker-compose exec drupal drush cr'",
-    "watch:all": "concurrently \"npm run dev\" \"npm run watch:twig\"",
+    "dev": "tailwindcss -i ./themes/portfolio/src/app.css -o ./themes/portfolio/css/style.css --watch",
+    "build": "tailwindcss -i ./themes/portfolio/src/app.css -o ./themes/portfolio/css/style.css --minify",
+    "watch:changes": "chokidar './themes/portfolio/css/style.css' './themes/portfolio/templates/**/*.twig' -c 'echo \"Change detected, clearing Drupal cache...\" && docker-compose exec drupal drush cr'",
+    "watch:all": "npm run build && concurrently \"npm run dev\" \"npm run watch:changes\"",
     "clear-cache": "docker-compose exec drupal drush cr"
   },
   "keywords": [],
