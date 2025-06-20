@@ -17,16 +17,7 @@ services:
       # Essential data only
       - ./database:/var/www/html/database # SQLite database (version controlled)
       - ./themes:/var/www/html/themes/custom # Your custom theme
-      - ./data:/var/www/html/data # CSV import data
-      - ./files:/var/www/html/sites/default/files # Uploaded files/images
 
     labels:
       - "app.name=portfolio-drupal"
       - "deployment.type=development"
-
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s

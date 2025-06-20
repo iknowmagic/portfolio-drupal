@@ -25,6 +25,17 @@ function portfolio_preprocess_image_widget(array &$variables) {
  */
 function portfolio_preprocess_page(&$variables) {
   if ($variables['is_front'] && !isset($variables['projects'])) {
+    
+    // Check if project content type exists - prevent crash
+    $node_types = \Drupal::entityTypeManager()->getStorage('node_type')->loadMultiple();
+    if (!isset($node_types['project'])) {
+      // Content type doesn't exist - output empty data structure
+      $variables['all_projects'] = [];
+      $variables['featured_projects'] = [];
+      $variables['experiment_projects'] = [];
+      return;
+    }
+    
     $node_storage = \Drupal::entityTypeManager()->getStorage('node');
     $query = $node_storage->getQuery()
       ->condition('type', 'project')
