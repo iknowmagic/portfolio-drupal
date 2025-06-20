@@ -1,0 +1,29 @@
+{#
+/**
+ * @file
+ * FooterSocial component - matches SvelteKit FooterSocial.svelte
+ * 
+ * Social icons for footer section
+ * Mobile-first responsive positioning
+ */
+#}
+
+<!-- Social Icons Section - Mobile First: py-6, md: py-8, lg: py-10 (40px spec) -->
+<div class="flex justify-start lg:justify-end py-6 md:py-8 lg:py-10">
+  <div class="flex gap-4">
+    <a
+      href="https://github.com/iknowmagic"
+      target="_blank"
+      class="hover:opacity-60 transition-opacity icon-inverse"
+    >
+      <i data-lucide="github" class="w-5 h-5"></i>
+    </a>
+    <a
+      href="https://linkedin.com/in/cod3naut"
+      target="_blank"
+      class="hover:opacity-60 transition-opacity icon-inverse"
+    >
+      <i data-lucide="linkedin" class="w-5 h-5"></i>
+    </a>
+  </div>
+</div>

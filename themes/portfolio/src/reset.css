@@ -1,0 +1,16 @@
+/**
+ * @file
+ * Reset CSS to override Drupal core/normalize and browser defaults
+ * 
+ * This resets common Drupal styling that interferes with our design system.
+ * Import this BEFORE Tailwind to ensure proper cascade order.
+ */
+
+/* Reset heading styles from Drupal's core/normalize */
+h1 {
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+  padding: 0;
+  line-height: inherit;
+}
