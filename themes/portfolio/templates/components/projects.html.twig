@@ -1,0 +1,91 @@
+{#
+/**
+ * @file
+ * Projects component
+ * 
+ * Features:
+ * - Projects title + filter pills navigation
+ * - Projects grid with border and grid-inner plugin
+ * - JavaScript filtering functionality
+ * - Uses preprocessed data from portfolio.theme
+ */
+#}
+
+<!-- Projects Navigation -->
+<section class="py-12 lg:py-15">
+  <div class="flex lg:flex-row flex-col lg:justify-between lg:items-center gap-6">
+    <!-- Left: Projects Title -->
+    <h2 class="font-[600] text-2xl">PROJECTS</h2>
+
+    <!-- Right: Filter Pills -->
+    <div class="flex flex-wrap gap-3">
+      <button
+        class="filter-btn rounded-full btn-outline btn btn-sm hover:btn-neutral active"
+        data-filter="ALL"
+      >
+        ALL
+      </button>
+      <button
+        class="filter-btn rounded-full btn-outline btn btn-sm hover:btn-neutral"
+        data-filter="FEATURED"
+      >
+        FEATURED
+      </button>
+      <button
+        class="filter-btn rounded-full btn-outline btn btn-sm hover:btn-neutral"
+        data-filter="EXPERIMENTS"
+      >
+        EXPERIMENTS
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Projects Grid Container -->
+<section class="mb-32 lg:mb-50">
+  <!-- Clean Grid using grid-inner plugin -->
+  <div class="grid-inner-1 md:grid-inner-2 lg:grid-inner-3 border-2 border-black" id="projects-grid">
+    {% if all_projects %}
+      {% for project in all_projects %}
+        <div class="relative w-full h-full" data-tags="{{ project.tags|join(',') }}">
+          <!-- ProjectLink wrapper includes ProjectCard content -->
+          {% include '@portfolio/components/project-link.html.twig' with {'project': project} %}
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="col-span-full py-12 text-center">
+        <p class="text-medium-500">No projects found.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- Project Filtering JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  const projectWrappers = document.querySelectorAll('[data-tags]');
+  
+  filterButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const filterValue = this.getAttribute('data-filter');
+      
+      // Update active button styling
+      filterButtons.forEach(btn => {
+        btn.classList.remove('bg-black', 'text-white', 'border-black');
+      });
+      this.classList.add('bg-black', 'text-white', 'border-black');
+      
+      // Filter projects
+      projectWrappers.forEach(wrapper => {
+        const cardTags = wrapper.getAttribute('data-tags').split(',');
+        const shouldShow = filterValue === 'ALL' || 
+                          (filterValue === 'FEATURED' && cardTags.includes('featured')) ||
+                          (filterValue === 'EXPERIMENTS' && cardTags.includes('experiments'));
+        
+        wrapper.style.display = shouldShow ? 'block' : 'none';
+      });
+    });
+  });
+});
+</script>

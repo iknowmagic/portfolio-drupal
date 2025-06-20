@@ -1,0 +1,42 @@
+{#
+/**
+ * @file
+ * ProjectLink component
+ * 
+ * Wrapper component that adds interaction and hover overlays
+ * Conditionally renders based on whether project has links
+ * Uses smart link priority logic from portfolio.theme preprocessing
+ */
+#}
+
+{% if project.primary_link %}
+	<!-- ProjectLink with interaction - has links available -->
+	<div
+		class="group relative h-full cursor-pointer"
+		onclick="window.open('{{ project.primary_link.url }}', '_blank', 'noopener,noreferrer')"
+		onkeydown="if(event.key === 'Enter') window.open('{{ project.primary_link.url }}', '_blank', 'noopener,noreferrer')"
+		role="button"
+		tabindex="0"
+		aria-label="Open {{ project.media_display.label }} for {{ project.title }}">
+		<!-- Card Content (slot equivalent) -->
+		<div class="h-full">
+			{% include '@portfolio/components/project-card.html.twig' with {'project': project} %}
+		</div>
+
+		<!-- Hover Overlay -->
+		<div class="-left-px absolute inset-0 flex flex-col justify-center items-center bg-black/80 opacity-0 group-hover:opacity-100 h-full transition-opacity duration-200">
+			{% if project.media_display %}
+				<!-- Icon - matches size={48} from SvelteKit -->
+				<i data-lucide="{{ project.media_display.icon }}" class="mb-2 w-12 h-12 text-white"></i>
+
+				<!-- Label -->
+				<span class="font-medium text-white text-small uppercase tracking-wide">
+					{{ project.media_display.label }}
+				</span>
+			{% endif %}
+		</div>
+	</div>
+{% else %}
+	<!-- No links - just render content without interaction (slot equivalent) -->
+	{% include '@portfolio/components/project-card.html.twig' with {'project': project} %}
+{% endif %}
