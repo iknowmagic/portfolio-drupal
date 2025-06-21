@@ -1,12 +1,4 @@
-{#
-/**
- * @file
- * Front page shell template with component includes.
- * 
- * Simple shell to test component include system,
- * then we'll build each component incrementally.
- */
-#}
+{# page--front.html.twig - Homepage shows all projects #}
 
 {# Header Component #}
 {% include '@portfolio/components/header.html.twig' %}
@@ -14,8 +6,8 @@
 {# Hero Component #}
 {% include '@portfolio/components/hero.html.twig' %}
 
-{# Projects Component #}
-{% include '@portfolio/components/projects.html.twig' %}
+{# Projects Component - Pass 'all' filter #}
+{% include '@portfolio/components/projects.html.twig' with {'filter': 'all'} %}
 
 {# Footer Component #}
 {% include '@portfolio/components/footer.html.twig' %}

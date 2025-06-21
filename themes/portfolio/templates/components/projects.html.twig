@@ -1,27 +1,24 @@
 {#
 /**
  * @file
- * Projects component
+ * Projects component with flag-based filtering
  * 
- * Features:
- * - Projects title + filter pills navigation (now URL-based)
- * - Projects grid with border and grid-inner plugin
- * - Server-side filtering via URL parameters
- * - Uses preprocessed data from portfolio.theme
+ * Parameters:
+ *   filter: 'all'|'featured'|'experiments' - determines which projects to show
  */
 #}
 
-<!-- DEBUG INFO -->
-<div style="background: yellow; padding: 10px; margin: 10px 0;">
-  <strong>Debug Info:</strong><br>
-  Current filter: {{ current_filter }}<br>
-  Total projects in all_projects: {{ all_projects|length }}<br>
-  Featured projects: {{ featured_projects|length }}<br>
-  Experiment projects: {{ experiment_projects|length }}<br>
-  {% if all_projects|length > 0 %}
-    First project tags: {{ all_projects[0].tags|join(', ') }}<br>
-  {% endif %}
-</div>
+{# Get the filter parameter passed from page template #}
+{% set current_filter = filter|default('all') %}
+
+{# Set current projects based on filter flag #}
+{% if current_filter == 'featured' %}
+  {% set current_projects = featured_projects %}
+{% elseif current_filter == 'experiments' %}
+  {% set current_projects = experiment_projects %}
+{% else %}
+  {% set current_projects = all_projects %}
+{% endif %}
 
 <!-- Projects Navigation -->
 <section class="py-12 lg:py-15">
@@ -29,7 +26,7 @@
     <!-- Left: Projects Title -->
     <h2 class="font-[600] text-2xl">PROJECTS</h2>
 
-    <!-- Right: Filter Pills - Keep original styling, just change to links -->
+    <!-- Right: Filter Pills - Now link to separate pages -->
     <div class="flex flex-wrap gap-3">
       <a
         href="/"
@@ -38,13 +35,13 @@
         ALL
       </a>
       <a
-        href="/?filter=featured"
+        href="/featured"
         class="filter-btn rounded-full btn-outline btn btn-sm hover:btn-neutral {% if current_filter == 'featured' %}active{% endif %}"
       >
         FEATURED
       </a>
       <a
-        href="/?filter=experiments"
+        href="/experiments"
         class="filter-btn rounded-full btn-outline btn btn-sm hover:btn-neutral {% if current_filter == 'experiments' %}active{% endif %}"
       >
         EXPERIMENTS
@@ -57,8 +54,8 @@
 <section class="mb-32 lg:mb-50">
   <!-- Clean Grid using grid-inner plugin -->
   <div class="grid-inner-1 md:grid-inner-2 lg:grid-inner-3 border-2 border-black">
-    {% if all_projects %}
-      {% for project in all_projects %}
+    {% if current_projects %}
+      {% for project in current_projects %}
         <div class="relative w-full h-full">
           <!-- ProjectLink wrapper includes ProjectCard content -->
           {% include '@portfolio/components/project-link.html.twig' with {'project': project} %}

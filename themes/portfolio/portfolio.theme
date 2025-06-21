@@ -24,7 +24,9 @@ function portfolio_preprocess_image_widget(array &$variables) {
  * Implements hook_preprocess_page().
  */
 function portfolio_preprocess_page(&$variables) {
-  if ($variables['is_front'] && !isset($variables['projects'])) {
+  // Apply to all pages that need project data (front page and project pages)
+  if ($variables['is_front'] || 
+      (isset($variables['node']) && $variables['node']->getType() === 'page')) {
     
     // Check if project content type exists - prevent crash
     $node_types = \Drupal::entityTypeManager()->getStorage('node_type')->loadMultiple();
@@ -34,23 +36,6 @@ function portfolio_preprocess_page(&$variables) {
       $variables['experiment_projects'] = [];
       return;
     }
-
-    // DEBUG: Check what we're actually getting
-    $request = \Drupal::request();
-    $filter_param = $request->query->get('filter');
-    
-    // More explicit filter handling
-    if ($filter_param === null || $filter_param === '') {
-      $filter = 'all';
-    } else {
-      $filter = $filter_param;
-    }
-    
-    // DEBUG: Log what we got (remove after testing)
-    \Drupal::logger('portfolio')->info('Filter param: @param, Final filter: @filter', [
-      '@param' => var_export($filter_param, TRUE),
-      '@filter' => $filter,
-    ]);
     
     // Load projects
     $node_storage = \Drupal::entityTypeManager()->getStorage('node');
@@ -63,16 +48,16 @@ function portfolio_preprocess_page(&$variables) {
     $project_ids = $query->execute();
     $projects = $node_storage->loadMultiple($project_ids);
     
-    // Process all projects first
-    $all_projects_unfiltered = [];
+    // Process and categorize projects
+    $all_projects = [];
     $featured_projects = [];
     $experiment_projects = [];
     
     foreach ($projects as $project) {
       $processed_project = _portfolio_process_project($project);
-      $all_projects_unfiltered[] = $processed_project;
+      $all_projects[] = $processed_project;
       
-      // Categorize
+      // Categorize for template filtering
       if (in_array('featured', $processed_project['tags'])) {
         $featured_projects[] = $processed_project;
       }
@@ -81,25 +66,10 @@ function portfolio_preprocess_page(&$variables) {
       }
     }
     
-    // Apply filter
-    if ($filter === 'featured') {
-      $filtered_projects = $featured_projects;
-    } elseif ($filter === 'experiments') {
-      $filtered_projects = $experiment_projects;
-    } else {
-      // 'all' or any other value
-      $filtered_projects = $all_projects_unfiltered;
-    }
-    
-    // Pass to templates
-    $variables['all_projects'] = $filtered_projects;
+    // Provide all project arrays - template decides what to show
+    $variables['all_projects'] = $all_projects;
     $variables['featured_projects'] = $featured_projects;
     $variables['experiment_projects'] = $experiment_projects;
-    $variables['current_filter'] = $filter;
-    
-    // DEBUG: Add debug info to template
-    $variables['debug_filter_param'] = $filter_param;
-    $variables['debug_final_filter'] = $filter;
   }
 }
 
