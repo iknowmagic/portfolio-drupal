@@ -4,12 +4,24 @@
  * Projects component
  * 
  * Features:
- * - Projects title + filter pills navigation
+ * - Projects title + filter pills navigation (now URL-based)
  * - Projects grid with border and grid-inner plugin
- * - JavaScript filtering functionality
+ * - Server-side filtering via URL parameters
  * - Uses preprocessed data from portfolio.theme
  */
 #}
+
+<!-- DEBUG INFO -->
+<div style="background: yellow; padding: 10px; margin: 10px 0;">
+  <strong>Debug Info:</strong><br>
+  Current filter: {{ current_filter }}<br>
+  Total projects in all_projects: {{ all_projects|length }}<br>
+  Featured projects: {{ featured_projects|length }}<br>
+  Experiment projects: {{ experiment_projects|length }}<br>
+  {% if all_projects|length > 0 %}
+    First project tags: {{ all_projects[0].tags|join(', ') }}<br>
+  {% endif %}
+</div>
 
 <!-- Projects Navigation -->
 <section class="py-12 lg:py-15">
@@ -17,26 +29,26 @@
     <!-- Left: Projects Title -->
     <h2 class="font-[600] text-2xl">PROJECTS</h2>
 
-    <!-- Right: Filter Pills -->
+    <!-- Right: Filter Pills - Keep original styling, just change to links -->
     <div class="flex flex-wrap gap-3">
-      <button
-        class="filter-btn rounded-full btn-outline btn btn-sm hover:btn-neutral active"
-        data-filter="ALL"
+      <a
+        href="/"
+        class="filter-btn rounded-full btn-outline btn btn-sm hover:btn-neutral {% if current_filter == 'all' %}active{% endif %}"
       >
         ALL
-      </button>
-      <button
-        class="filter-btn rounded-full btn-outline btn btn-sm hover:btn-neutral"
-        data-filter="FEATURED"
+      </a>
+      <a
+        href="/?filter=featured"
+        class="filter-btn rounded-full btn-outline btn btn-sm hover:btn-neutral {% if current_filter == 'featured' %}active{% endif %}"
       >
         FEATURED
-      </button>
-      <button
-        class="filter-btn rounded-full btn-outline btn btn-sm hover:btn-neutral"
-        data-filter="EXPERIMENTS"
+      </a>
+      <a
+        href="/?filter=experiments"
+        class="filter-btn rounded-full btn-outline btn btn-sm hover:btn-neutral {% if current_filter == 'experiments' %}active{% endif %}"
       >
         EXPERIMENTS
-      </button>
+      </a>
     </div>
   </div>
 </section>
@@ -44,48 +56,18 @@
 <!-- Projects Grid Container -->
 <section class="mb-32 lg:mb-50">
   <!-- Clean Grid using grid-inner plugin -->
-  <div class="grid-inner-1 md:grid-inner-2 lg:grid-inner-3 border-2 border-black" id="projects-grid">
+  <div class="grid-inner-1 md:grid-inner-2 lg:grid-inner-3 border-2 border-black">
     {% if all_projects %}
       {% for project in all_projects %}
-        <div class="relative w-full h-full" data-tags="{{ project.tags|join(',') }}">
+        <div class="relative w-full h-full">
           <!-- ProjectLink wrapper includes ProjectCard content -->
           {% include '@portfolio/components/project-link.html.twig' with {'project': project} %}
         </div>
       {% endfor %}
     {% else %}
       <div class="col-span-full py-12 text-center">
-        <p class="text-medium-500">No projects found.</p>
+        <p class="text-medium-500">No projects found for this filter.</p>
       </div>
     {% endif %}
   </div>
 </section>
-
-<!-- Project Filtering JavaScript -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const filterButtons = document.querySelectorAll('.filter-btn');
-  const projectWrappers = document.querySelectorAll('[data-tags]');
-  
-  filterButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      const filterValue = this.getAttribute('data-filter');
-      
-      // Update active button styling
-      filterButtons.forEach(btn => {
-        btn.classList.remove('bg-black', 'text-white', 'border-black');
-      });
-      this.classList.add('bg-black', 'text-white', 'border-black');
-      
-      // Filter projects
-      projectWrappers.forEach(wrapper => {
-        const cardTags = wrapper.getAttribute('data-tags').split(',');
-        const shouldShow = filterValue === 'ALL' || 
-                          (filterValue === 'FEATURED' && cardTags.includes('featured')) ||
-                          (filterValue === 'EXPERIMENTS' && cardTags.includes('experiments'));
-        
-        wrapper.style.display = shouldShow ? 'block' : 'none';
-      });
-    });
-  });
-});
-</script>

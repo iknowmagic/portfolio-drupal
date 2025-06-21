@@ -246,3 +246,9 @@ body {
 .social-link:hover {
   opacity: 0.6;
 }
+
+.filter-btn.active {
+  background-color: var(--color-black);
+  color: var(--color-white);
+  border-color: var(--color-black);
+}

@@ -29,44 +29,77 @@ function portfolio_preprocess_page(&$variables) {
     // Check if project content type exists - prevent crash
     $node_types = \Drupal::entityTypeManager()->getStorage('node_type')->loadMultiple();
     if (!isset($node_types['project'])) {
-      // Content type doesn't exist - output empty data structure
       $variables['all_projects'] = [];
       $variables['featured_projects'] = [];
       $variables['experiment_projects'] = [];
       return;
     }
+
+    // DEBUG: Check what we're actually getting
+    $request = \Drupal::request();
+    $filter_param = $request->query->get('filter');
     
+    // More explicit filter handling
+    if ($filter_param === null || $filter_param === '') {
+      $filter = 'all';
+    } else {
+      $filter = $filter_param;
+    }
+    
+    // DEBUG: Log what we got (remove after testing)
+    \Drupal::logger('portfolio')->info('Filter param: @param, Final filter: @filter', [
+      '@param' => var_export($filter_param, TRUE),
+      '@filter' => $filter,
+    ]);
+    
+    // Load projects
     $node_storage = \Drupal::entityTypeManager()->getStorage('node');
     $query = $node_storage->getQuery()
       ->condition('type', 'project')
       ->condition('status', 1)
       ->accessCheck(TRUE)
-      ->sort('field_project_order', 'DESC'); // Match SvelteKit order: highest first
+      ->sort('field_project_order', 'DESC');
     
     $project_ids = $query->execute();
     $projects = $node_storage->loadMultiple($project_ids);
     
-    // Enhanced project processing with SvelteKit-style data structure
-    $all_projects = [];
+    // Process all projects first
+    $all_projects_unfiltered = [];
     $featured_projects = [];
     $experiment_projects = [];
     
     foreach ($projects as $project) {
       $processed_project = _portfolio_process_project($project);
-      $all_projects[] = $processed_project;
+      $all_projects_unfiltered[] = $processed_project;
       
-      // Sort into categories based on tags
+      // Categorize
       if (in_array('featured', $processed_project['tags'])) {
         $featured_projects[] = $processed_project;
-      } elseif (in_array('experiments', $processed_project['tags'])) {
+      }
+      if (in_array('experiments', $processed_project['tags'])) {
         $experiment_projects[] = $processed_project;
       }
     }
     
-    // Pass processed data to templates
-    $variables['all_projects'] = $all_projects;
+    // Apply filter
+    if ($filter === 'featured') {
+      $filtered_projects = $featured_projects;
+    } elseif ($filter === 'experiments') {
+      $filtered_projects = $experiment_projects;
+    } else {
+      // 'all' or any other value
+      $filtered_projects = $all_projects_unfiltered;
+    }
+    
+    // Pass to templates
+    $variables['all_projects'] = $filtered_projects;
     $variables['featured_projects'] = $featured_projects;
     $variables['experiment_projects'] = $experiment_projects;
+    $variables['current_filter'] = $filter;
+    
+    // DEBUG: Add debug info to template
+    $variables['debug_filter_param'] = $filter_param;
+    $variables['debug_final_filter'] = $filter;
   }
 }
 
