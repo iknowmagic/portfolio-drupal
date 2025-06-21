@@ -11,7 +11,7 @@
 {% set project_description = content.field_project_description|render|striptags|trim %}
 {% set project_image = content.field_project_image %}
 {% set project_github = node.field_project_github.uri %}
-{% set project_link = node.field_project_link.uri %}
+{% set project_link = node.field_project_live.uri %}
 {% set project_tags = [] %}
 
 {# Build tags array for filtering #}

@@ -1,23 +1,26 @@
 services:
   drupal:
-    image: drupal:10
+    build: .
     container_name: drupal
     ports:
       - "8080:80"
-    restart: unless-stopped
+    depends_on:
+      - postgres
     environment:
-      # Performance settings
-      - PHP_MEMORY_LIMIT=512M
-      - PHP_MAX_EXECUTION_TIME=300
-
-      # Environment type
       - DRUPAL_ENV=development
-
     volumes:
-      # Essential data only
-      - ./database:/var/www/html/database # SQLite database (version controlled)
-      - ./themes:/var/www/html/themes/custom # Your custom theme
+      - ./themes:/opt/drupal/web/themes/custom
 
-    labels:
-      - "app.name=portfolio-drupal"
-      - "deployment.type=development"
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: portfolio
+      POSTGRES_USER: drupal
+      POSTGRES_PASSWORD: drupal123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432" # Optional: for external DB access
+
+volumes:
+  postgres_data:

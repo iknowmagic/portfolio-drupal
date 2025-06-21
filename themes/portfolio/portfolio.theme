@@ -132,7 +132,7 @@ function _portfolio_process_project($project) {
   
   // Links - Map Drupal fields to SvelteKit structure
   $link_fields = [
-    'live' => 'field_project_link',
+    'live' => 'field_project_live',
     'github' => 'field_project_github', 
     'video' => 'field_project_video',
     'article' => 'field_project_article',

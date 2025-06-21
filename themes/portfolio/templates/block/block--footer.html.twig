@@ -29,10 +29,10 @@
             {% for project in featured_projects %}
               {% set project_node = project._entity %}
               <li>
-                {% if project_node.field_project_link.uri %}
+                {% if project_node.field_project_live.uri %}
                   <a
-                    href="{{ project_node.field_project_link.uri }}"
-                    {% if project_node.field_project_link.uri starts with 'http' %}
+                    href="{{ project_node.field_project_live.uri }}"
+                    {% if project_node.field_project_live.uri starts with 'http' %}
                       target="_blank"
                       rel="noopener noreferrer"
                     {% endif %}
@@ -62,10 +62,10 @@
             {% for project in experiment_projects %}
               {% set project_node = project._entity %}
               <li>
-                {% if project_node.field_project_link.uri %}
+                {% if project_node.field_project_live.uri %}
                   <a
-                    href="{{ project_node.field_project_link.uri }}"
-                    {% if project_node.field_project_link.uri starts with 'http' %}
+                    href="{{ project_node.field_project_live.uri }}"
+                    {% if project_node.field_project_live.uri starts with 'http' %}
                       target="_blank"
                       rel="noopener noreferrer"
                     {% endif %}
