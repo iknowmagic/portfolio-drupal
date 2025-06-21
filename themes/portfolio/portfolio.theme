@@ -24,18 +24,31 @@ function portfolio_preprocess_image_widget(array &$variables) {
  * Implements hook_preprocess_page().
  */
 function portfolio_preprocess_page(&$variables) {
-  if ($variables['is_front'] && !isset($variables['projects'])) {
+  // Apply to all pages that need project data (front page and project pages)
+  if ($variables['is_front'] || 
+      (isset($variables['node']) && $variables['node']->getType() === 'page')) {
+    
+    // Check if project content type exists - prevent crash
+    $node_types = \Drupal::entityTypeManager()->getStorage('node_type')->loadMultiple();
+    if (!isset($node_types['project'])) {
+      $variables['all_projects'] = [];
+      $variables['featured_projects'] = [];
+      $variables['experiment_projects'] = [];
+      return;
+    }
+    
+    // Load projects
     $node_storage = \Drupal::entityTypeManager()->getStorage('node');
     $query = $node_storage->getQuery()
       ->condition('type', 'project')
       ->condition('status', 1)
       ->accessCheck(TRUE)
-      ->sort('field_project_order', 'DESC'); // Match SvelteKit order: highest first
+      ->sort('field_project_order', 'DESC');
     
     $project_ids = $query->execute();
     $projects = $node_storage->loadMultiple($project_ids);
     
-    // Enhanced project processing with SvelteKit-style data structure
+    // Process and categorize projects
     $all_projects = [];
     $featured_projects = [];
     $experiment_projects = [];
@@ -44,15 +57,16 @@ function portfolio_preprocess_page(&$variables) {
       $processed_project = _portfolio_process_project($project);
       $all_projects[] = $processed_project;
       
-      // Sort into categories based on tags
+      // Categorize for template filtering
       if (in_array('featured', $processed_project['tags'])) {
         $featured_projects[] = $processed_project;
-      } elseif (in_array('experiments', $processed_project['tags'])) {
+      }
+      if (in_array('experiments', $processed_project['tags'])) {
         $experiment_projects[] = $processed_project;
       }
     }
     
-    // Pass processed data to templates
+    // Provide all project arrays - template decides what to show
     $variables['all_projects'] = $all_projects;
     $variables['featured_projects'] = $featured_projects;
     $variables['experiment_projects'] = $experiment_projects;
@@ -121,7 +135,7 @@ function _portfolio_process_project($project) {
   
   // Links - Map Drupal fields to SvelteKit structure
   $link_fields = [
-    'live' => 'field_project_link',
+    'live' => 'field_project_live',
     'github' => 'field_project_github', 
     'video' => 'field_project_video',
     'article' => 'field_project_article',

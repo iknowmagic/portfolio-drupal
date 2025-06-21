@@ -1,13 +1,12 @@
-{# page--front.html.twig - Homepage shows all projects #}
-
+{# page--node--19.html.twig - Featured projects page #}
 {# Header Component #}
 {% include '@portfolio/components/header.html.twig' %}
 
 {# Hero Component #}
 {% include '@portfolio/components/hero.html.twig' %}
 
-{# Projects Component - Pass 'all' filter #}
-{% include '@portfolio/components/projects.html.twig' with {'filter': 'all'} %}
+{# Projects Component - Pass 'featured' filter #}
+{% include '@portfolio/components/projects.html.twig' with {'filter': 'featured'} %}
 
 {# Footer Component #}
 {% include '@portfolio/components/footer.html.twig' %}
